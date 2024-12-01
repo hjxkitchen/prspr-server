@@ -34,6 +34,16 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Receive audio stream from client
+  socket.on("sendAudioStream", (stream) => {
+    // Broadcast audio stream to other peers
+    for (const [id] of Object.entries(peers)) {
+      if (id !== socket.id) {
+        io.to(id).emit("receiveAudioStream", { id: socket.id, stream });
+      }
+    }
+  });
+
   // Handle Disconnection
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
